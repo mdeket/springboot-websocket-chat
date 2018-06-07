@@ -3,21 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>WebSockets</title>
-    <script
-            src="https://code.jquery.com/jquery-3.3.1.min.js"
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
             crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+    <script src="./chat.js"></script>
 </head>
 <body>
+<div class="container">
+
 <h1>Hello, <span id="myUsername"></span></h1>
-<input id="publicMessageDataInput" type="text" />
-<button id="publicSubmit">Send Public Message</button>
+<form action="javascript:void(0);">
+    <div class="row">
+        <div class="col">
+            <input type="text" class="form-control" id="publicMessageDataInput" placeholder="Your message">
+        </div>
+    </div>
+    <button id="publicSubmit" class="btn btn-primary">Send Public Message</button>
+</form>
+
 
 <br/>
-<input id="privateMessageDataInput" type="text" />
-<button id="privateSubmit">Send Private Message </button><input id="privateMessageUsernameInput" type="text" placeholder="username"/>
+
+<form action="javascript:void(0);">
+    <div class="form-row">
+        <div class="col">
+            <input type="text" class="form-control" id="privateMessageDataInput" placeholder="Your message">
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="col">
+            <input type="text" class="form-control" id="privateMessageUsernameInput" placeholder="Username">
+        </div>
+    </div>
+    <button id="privateSubmit" class="btn btn-primary">Send Private Message</button>
+</form>
 
 <h2>Rest of users:</h2>
 <ul id="usernames">
@@ -30,120 +57,6 @@
 <h3>Private messages</h3>
 <ul id="privateChat">
 </ul>
-
-<script>
-    var ws;
-    var stompClient;
-    var myUsername = "unknown";
-    $(document).ready(function () {
-
-        ws = new SockJS('/ws');
-        stompClient = Stomp.over(ws);
-
-        stompClient.connect({}, function (frame) {
-
-            myUsername = JSON.parse(JSON.stringify(frame)).headers['user-name'];
-            updateMyUsername();
-
-            stompClient.subscribe("/app/chat.participants", function (message) {
-                showUsernames(message);
-            });
-
-            stompClient.subscribe("/topic/chat.login", function (message) {
-                addUsername(message);
-            });
-
-            stompClient.subscribe("/topic/chat.logout", function (message) {
-                removeUsername(message);
-            });
-
-            stompClient.subscribe("/topic/chat.public", function (message) {
-                addPublicMessage(message.body);
-            });
-
-            stompClient.subscribe("/user/exchange/amq.direct/chat.private", function (message) {
-                addPrivateMessage(message.body);
-            });
-
-        }, function (error) {
-            console.log(error);
-            alert("Bloody hell, something went wrong!")
-        });
-
-        $('#submit').on('click', function () {
-            sendData();
-        });
-
-        $('#privateSubmit').on('click', function () {
-            sendPrivate();
-        });
-
-        $('#publicSubmit').on('click', function () {
-            sendPublic();
-        });
-
-        $('#subscribe').on('click', function () {
-            ws.onmessage = function (data) {
-                console.log(data);
-            };
-        });
-
-        function sendPrivate(){
-            var username = $('#privateMessageUsernameInput').val();
-            var data = $("#privateMessageDataInput").val();
-            stompClient.send("/app/chat.private." + username, {}, JSON.stringify({ message: data, username: 'me'}));
-            addPrivateMessage(JSON.stringify({ message: data, username: 'me'}));
-        }
-
-        function sendPublic(){
-            var data = $("#publicMessageDataInput").val();
-            stompClient.send("/app/chat.public", {}, JSON.stringify({ message: data }));
-            // addPublicMessage(JSON.stringify({ message: data, username: myUsername }));
-        }
-
-        function addPrivateMessage(message) {
-            var parsedMessage = JSON.parse(message);
-            var from = parsedMessage['username'];
-            var text = parsedMessage['message'];
-            $('#privateChat').append('<li>' + text + " : "  + from + '</li>');
-        }
-
-        function addPublicMessage(message) {
-            var parsedMessage = JSON.parse(message);
-            var from = parsedMessage['username'];
-            var text = parsedMessage['message'];
-            $('#publicChat').append('<li>' + text + " : "  + from + '</li>');
-        }
-
-        // USERNAME FUNCTIONS
-        function removeUsername(message){
-            $('#' + JSON.parse(message.body).username).remove()
-        }
-
-        function showUsernames(messages) {
-            $('#usernames').html();
-            JSON.parse(messages.body).forEach(function(message){
-                if(message.username !== myUsername) {
-                    $('#usernames').append('<li id="' + message.username + '">' + message.username + '</li>');
-                }
-            });
-        }
-
-        function addUsername(message){
-            $('#usernames').html();
-            $('#usernames').append('<li id="' + JSON.parse(message.body).username + '">' + JSON.parse(message.body).username + '</li>');
-        }
-
-        function updateMyUsername(){
-            $('#myUsername').text(myUsername);
-        }
-        // END OF USERNAME FUNCTIONS
-
-        updateMyUsername();
-    });
-
-
-</script>
-
+</div>
 </body>
 </html>
