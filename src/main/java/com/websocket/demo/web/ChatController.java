@@ -1,8 +1,8 @@
 package com.websocket.demo.web;
 
-import com.websocket.demo.ChatMessage;
+import com.websocket.demo.domain.ChatMessage;
 import com.websocket.demo.ChatRepository;
-import com.websocket.demo.LoginEvent;
+import com.websocket.demo.domain.LoginEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;

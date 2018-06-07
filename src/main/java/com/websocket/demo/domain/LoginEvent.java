@@ -1,4 +1,4 @@
-package com.websocket.demo;
+package com.websocket.demo.domain;
 
 import java.time.Instant;
 

@@ -1,5 +1,7 @@
 package com.websocket.demo;
 
+import com.websocket.demo.domain.LoginEvent;
+import com.websocket.demo.domain.LogoutEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;

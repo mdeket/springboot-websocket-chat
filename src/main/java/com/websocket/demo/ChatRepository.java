@@ -1,5 +1,6 @@
 package com.websocket.demo;
 
+import com.websocket.demo.domain.LoginEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
