@@ -12,15 +12,25 @@
 </head>
 <body>
 <h1>Hello, <span id="myUsername"></span></h1>
-<input id="data" type="text" />
+<input id="publicMessageDataInput" type="text" />
+<button id="publicSubmit">Send Public Message</button>
 
-<button id="private">Send private to </button><input id="user" type="text"/>
-<button id="submit">Submit</button>
-<button id="subscribe">Subscribe</button>
+<br/>
+<input id="privateMessageDataInput" type="text" />
+<button id="privateSubmit">Send Private Message </button><input id="privateMessageUsernameInput" type="text" placeholder="username"/>
+
 <h2>Rest of users:</h2>
 <ul id="usernames">
-
 </ul>
+
+<h3>Public messages</h3>
+<ul id="publicChat">
+</ul>
+
+<h3>Private messages</h3>
+<ul id="privateChat">
+</ul>
+
 <script>
     var ws;
     var stompClient;
@@ -35,11 +45,6 @@
             myUsername = JSON.parse(JSON.stringify(frame)).headers['user-name'];
             updateMyUsername();
 
-            stompClient.subscribe("/user/exchange", function (message) {
-                // console.log("Received: " + message);
-                alert(message);
-            });
-
             stompClient.subscribe("/app/chat.participants", function (message) {
                 showUsernames(message);
             });
@@ -52,12 +57,12 @@
                 removeUsername(message);
             });
 
-            stompClient.subscribe("/user/chat.message", function (message) {
-                console.log("user chat message: " + message);
+            stompClient.subscribe("/topic/chat.public", function (message) {
+                addPublicMessage(message.body);
             });
 
             stompClient.subscribe("/user/exchange/amq.direct/chat.private", function (message) {
-                console.log("user private chat message: " + message);
+                addPrivateMessage(message.body);
             });
 
         }, function (error) {
@@ -69,10 +74,13 @@
             sendData();
         });
 
-        $('#private').on('click', function () {
+        $('#privateSubmit').on('click', function () {
             sendPrivate();
         });
 
+        $('#publicSubmit').on('click', function () {
+            sendPublic();
+        });
 
         $('#subscribe').on('click', function () {
             ws.onmessage = function (data) {
@@ -80,8 +88,36 @@
             };
         });
 
-        function sendData() {
-            stompClient.send("/app/questions", {}, $("#data").val());
+        function sendPrivate(){
+            var username = $('#privateMessageUsernameInput').val();
+            var data = $("#privateMessageDataInput").val();
+            stompClient.send("/app/chat.private." + username, {}, JSON.stringify({ message: data, username: 'me'}));
+            addPrivateMessage(JSON.stringify({ message: data, username: 'me'}));
+        }
+
+        function sendPublic(){
+            var data = $("#publicMessageDataInput").val();
+            stompClient.send("/app/chat.public", {}, JSON.stringify({ message: data }));
+            // addPublicMessage(JSON.stringify({ message: data, username: myUsername }));
+        }
+
+        function addPrivateMessage(message) {
+            var parsedMessage = JSON.parse(message);
+            var from = parsedMessage['username'];
+            var text = parsedMessage['message'];
+            $('#privateChat').append('<li>' + text + " : "  + from + '</li>');
+        }
+
+        function addPublicMessage(message) {
+            var parsedMessage = JSON.parse(message);
+            var from = parsedMessage['username'];
+            var text = parsedMessage['message'];
+            $('#publicChat').append('<li>' + text + " : "  + from + '</li>');
+        }
+
+        // USERNAME FUNCTIONS
+        function removeUsername(message){
+            $('#' + JSON.parse(message.body).username).remove()
         }
 
         function showUsernames(messages) {
@@ -98,19 +134,10 @@
             $('#usernames').append('<li id="' + JSON.parse(message.body).username + '">' + JSON.parse(message.body).username + '</li>');
         }
 
-        function sendPrivate(){
-            var username = $('#user').val();
-            var data = $("#data").val();
-            stompClient.send("/app/chat.private." + username, {}, JSON.stringify({ message: data, username: 'me'}));
-        }
-
-        function removeUsername(message){
-            $('#' + JSON.parse(message.body).username).remove()
-        }
-
         function updateMyUsername(){
             $('#myUsername').text(myUsername);
         }
+        // END OF USERNAME FUNCTIONS
 
         updateMyUsername();
     });
