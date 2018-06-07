@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSockets</title>
+    <script
+            src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h1>Hello, <span id="myUsername"></span></h1>
+<input id="data" type="text" />
+
+<button id="private">Send private to </button><input id="user" type="text"/>
+<button id="submit">Submit</button>
+<button id="subscribe">Subscribe</button>
+<h2>Rest of users:</h2>
+<ul id="usernames">
+
+</ul>
+<script>
+    var ws;
+    var stompClient;
+    var myUsername = "unknown";
+    $(document).ready(function () {
+
+        ws = new SockJS('/ws');
+        stompClient = Stomp.over(ws);
+
+        stompClient.connect({}, function (frame) {
+
+            myUsername = JSON.parse(JSON.stringify(frame)).headers['user-name'];
+            updateMyUsername();
+
+            stompClient.subscribe("/user/exchange", function (message) {
+                // console.log("Received: " + message);
+                alert(message);
+            });
+
+            stompClient.subscribe("/app/chat.participants", function (message) {
+                showUsernames(message);
+            });
+
+            stompClient.subscribe("/topic/chat.login", function (message) {
+                addUsername(message);
+            });
+
+            stompClient.subscribe("/topic/chat.logout", function (message) {
+                removeUsername(message);
+            });
+
+            stompClient.subscribe("/user/chat.message", function (message) {
+                console.log("user chat message: " + message);
+            });
+
+            stompClient.subscribe("/user/exchange/amq.direct/chat.private", function (message) {
+                console.log("user private chat message: " + message);
+            });
+
+        }, function (error) {
+            console.log(error);
+            alert("Bloody hell, something went wrong!")
+        });
+
+        $('#submit').on('click', function () {
+            sendData();
+        });
+
+        $('#private').on('click', function () {
+            sendPrivate();
+        });
+
+
+        $('#subscribe').on('click', function () {
+            ws.onmessage = function (data) {
+                console.log(data);
+            };
+        });
+
+        function sendData() {
+            stompClient.send("/app/questions", {}, $("#data").val());
+        }
+
+        function showUsernames(messages) {
+            $('#usernames').html();
+            JSON.parse(messages.body).forEach(function(message){
+                if(message.username !== myUsername) {
+                    $('#usernames').append('<li id="' + message.username + '">' + message.username + '</li>');
+                }
+            });
+        }
+
+        function addUsername(message){
+            $('#usernames').html();
+            $('#usernames').append('<li id="' + JSON.parse(message.body).username + '">' + JSON.parse(message.body).username + '</li>');
+        }
+
+        function sendPrivate(){
+            var username = $('#user').val();
+            var data = $("#data").val();
+            stompClient.send("/app/chat.private." + username, {}, JSON.stringify({ message: data, username: 'me'}));
+        }
+
+        function removeUsername(message){
+            $('#' + JSON.parse(message.body).username).remove()
+        }
+
+        function updateMyUsername(){
+            $('#myUsername').text(myUsername);
+        }
+
+        updateMyUsername();
+    });
+
+
+</script>
+
+</body>
+</html>
