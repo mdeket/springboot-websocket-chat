@@ -1,11 +1,18 @@
 var ws;
 var stompClient;
 var myUsername = "unknown";
-
+var messageTemplate = '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">\n' +
+    '                    <div class="d-flex w-100 justify-content-between">\n' +
+    '                        <p class="mb-1">MESSAGE_TEXT</p>\n' +
+    '                        <small class="text-muted">3 days ago</small>\n' +
+    '                    </div>\n' +
+    '                    <small class="text-muted">MESSAGE_USERNAME</small>\n' +
+    '                </a>';
 $(document).ready(function () {
 
     ws = new SockJS('/ws');
     stompClient = Stomp.over(ws);
+
 
     stompClient.connect({}, function (frame) {
 
@@ -49,36 +56,35 @@ $(document).ready(function () {
         sendPublic();
     });
 
-    $('#subscribe').on('click', function () {
-        ws.onmessage = function (data) {
-            console.log(data);
-        };
-    });
-
     function sendPrivate(){
         var username = $('#privateMessageUsernameInput').val();
         var data = $("#privateMessageDataInput").val();
         stompClient.send("/app/chat.private." + username, {}, JSON.stringify({ message: data, username: 'me'}));
         addPrivateMessage(JSON.stringify({ message: data, username: 'me'}));
+        $('#privateMessageUsernameInput').val('');
+        $('#privateMessageDataInput').val('');
     }
 
     function sendPublic(){
         var data = $("#publicMessageDataInput").val();
         stompClient.send("/app/chat.public", {}, JSON.stringify({ message: data }));
+        $('#publicMessageDataInput').val('');
     }
 
     function addPrivateMessage(message) {
         var parsedMessage = JSON.parse(message);
         var from = parsedMessage['username'];
         var text = parsedMessage['message'];
-        $('#privateChat').append('<li>' + text + " : "  + from + '</li>');
+        var messageHTML = messageTemplate.replace('MESSAGE_TEXT', text).replace("MESSAGE_USERNAME", from);
+        $('#privateChat').append(messageHTML);
     }
 
     function addPublicMessage(message) {
         var parsedMessage = JSON.parse(message);
         var from = parsedMessage['username'];
         var text = parsedMessage['message'];
-        $('#publicChat').append('<li>' + text + " : "  + from + '</li>');
+        var messageHTML = messageTemplate.replace('MESSAGE_TEXT', text).replace("MESSAGE_USERNAME", from);
+        $('#publicChat').append(messageHTML);
     }
 
     function removeUsername(message){
@@ -89,14 +95,14 @@ $(document).ready(function () {
         $('#usernames').html();
         JSON.parse(messages.body).forEach(function(message){
             if(message.username !== myUsername) {
-                $('#usernames').append('<li id="' + message.username + '">' + message.username + '</li>');
+                $('#usernames').append('<li class="list-group-item" id="' + message.username + '">' + message.username + '</li>');
             }
         });
     }
 
     function addUsername(message){
         $('#usernames').html();
-        $('#usernames').append('<li id="' + JSON.parse(message.body).username + '">' + JSON.parse(message.body).username + '</li>');
+        $('#usernames').append('<li class="list-group-item" id="' + JSON.parse(message.body).username + '">' + JSON.parse(message.body).username + '</li>');
     }
 
     function updateMyUsername(){

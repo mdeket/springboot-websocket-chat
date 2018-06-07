@@ -3,60 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <title>WebSockets</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"
             integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
             crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
     <script src="./chat.js"></script>
 </head>
-<body>
+<body style="font-family: 'Open Sans', sans-serif;">
 <div class="container">
-
-<h1>Hello, <span id="myUsername"></span></h1>
-<form action="javascript:void(0);">
+    <div style="margin-top: 30px;margin-bottom: 30px;">
+        <h1>Hello, <span id="myUsername"></span></h1>
+    </div>
     <div class="row">
-        <div class="col">
-            <input type="text" class="form-control" id="publicMessageDataInput" placeholder="Your message">
+        <div class="col-6">
+            <h5>Online users:</h5>
+            <ul class="list-group list-group-flush" id="usernames">
+            </ul>
         </div>
     </div>
-    <button id="publicSubmit" class="btn btn-primary">Send Public Message</button>
-</form>
-
-
-<br/>
-
-<form action="javascript:void(0);">
-    <div class="form-row">
-        <div class="col">
-            <input type="text" class="form-control" id="privateMessageDataInput" placeholder="Your message">
+    <div class="row" style="margin-top: 50px">
+        <div class="col-6">
+            <form action="javascript:void(0);">
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="publicMessageDataInput">Message</label>
+                        <textarea class="form-control" id="publicMessageDataInput"></textarea>
+                    </div>
+                </div>
+                <button id="publicSubmit" class="btn btn-primary">Send Public Message</button>
+            </form>
+        </div>
+        <div class="col-6">
+            <form action="javascript:void(0);" >
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="privateMessageDataInput">Message</label>
+                        <textarea class="form-control" id="privateMessageDataInput"></textarea>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="privateMessageUsernameInput">To</label>
+                        <input type="text" class="form-control" id="privateMessageUsernameInput" placeholder="Username">
+                    </div>
+                </div>
+                <button id="privateSubmit" class="btn btn-primary">Send Private Message</button>
+            </form>
         </div>
     </div>
-    <div class="form-row">
+    <div class="row" style="margin-top: 50px">
         <div class="col">
-            <input type="text" class="form-control" id="privateMessageUsernameInput" placeholder="Username">
+            <h5>Public messages</h5>
+            <div id="publicChat" class="list-group">
+            </div>
+        </div>
+        <div class="col">
+            <h5>Private messages</h5>
+            <div id="privateChat" class="list-group">
+            </div>
         </div>
     </div>
-    <button id="privateSubmit" class="btn btn-primary">Send Private Message</button>
-</form>
-
-<h2>Rest of users:</h2>
-<ul id="usernames">
-</ul>
-
-<h3>Public messages</h3>
-<ul id="publicChat">
-</ul>
-
-<h3>Private messages</h3>
-<ul id="privateChat">
-</ul>
 </div>
 </body>
 </html>
