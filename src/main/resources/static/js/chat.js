@@ -102,12 +102,17 @@ $(document).ready(function () {
 
     function addUsername(message){
         $('#usernames').html();
-        $('#usernames').append('<li class="list-group-item" id="' + JSON.parse(message.body).username + '">' + JSON.parse(message.body).username + '</li>');
+        if(JSON.parse(message.body).username !== myUsername) {
+            $('#usernames').append('<li class="list-group-item" id="' + JSON.parse(message.body).username + '">' + JSON.parse(message.body).username + '</li>');
+        }
     }
 
     function updateMyUsername(){
         $('#myUsername').text(myUsername);
     }
 
+    $('li').on('click', function (e) {
+        alert();
+    });
     updateMyUsername();
 });
