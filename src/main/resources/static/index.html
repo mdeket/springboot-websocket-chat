@@ -21,7 +21,10 @@
 
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
     <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.6.8-fix/jquery.nicescroll.min.js"></script>
 
+    <link href="css/chat.css" rel="stylesheet">
     <script src="js/chat.js"></script>
     <script src="js/moment.min.js"></script>
 </head>
@@ -40,65 +43,116 @@
 
     </div>
 
-    <div class="row">
-        <div class="col-6">
-            <h5>Online users:</h5>
-            <ul class="list-group list-group-flush" id="usernames">
-            </ul>
-        </div>
-    </div>
+    <!--<div class="row">-->
+        <!--<div class="col-6">-->
+            <!--<h5>Online users:</h5>-->
+            <!--<ul class="list-group list-group-flush" id="usernames">-->
+            <!--</ul>-->
+        <!--</div>-->
+    <!--</div>-->
     <div class="row" style="margin-top: 50px">
 
-        <div class="col-6">
-            <form action="javascript:void(0);" >
-                <div class="form-row">
-                    <div class="form-group col-md-12">
-                        <label for="privateMessageDataInput">Message</label>
-                        <textarea class="form-control" id="privateMessageDataInput"></textarea>
-                    </div>
-                </div>
+        <!--<div class="col-6">-->
+            <!--<form action="javascript:void(0);" >-->
                 <!--<div class="form-row">-->
                     <!--<div class="form-group col-md-12">-->
-                        <!--<label for="privateMessageUsernameInput">To</label>-->
-                        <!--<input type="text" class="form-control" id="privateMessageUsernameInput" placeholder="Username">-->
+                        <!--<label for="privateMessageDataInput">Message</label>-->
+                        <!--<textarea class="form-control" id="privateMessageDataInput"></textarea>-->
                     <!--</div>-->
                 <!--</div>-->
-                <div class="form-row">
-                    <div class="form-group col-md-12">
-                        <label for="usernamesSelect">To</label>
-                        <select class="form-control" id="usernamesSelect">
-                            <option>Choose user for private chat</option>
-                        </select>
-                    </div>
-                </div>
-                <button id="privateSubmit" class="btn btn-primary">Send Private Message</button>
-            </form>
-        </div>
-        <div class="col-6">
-            <form action="javascript:void(0);">
-                <div class="form-row">
-                    <div class="form-group col-md-12">
-                        <label for="publicMessageDataInput">Message</label>
-                        <textarea class="form-control" id="publicMessageDataInput"></textarea>
-                    </div>
-                </div>
-                <button id="publicSubmit" class="btn btn-primary">Send Public Message</button>
-            </form>
-        </div>
+                <!--<div class="form-row">-->
+                    <!--<div class="form-group col-md-12">-->
+                        <!--<label for="usernamesSelect">To</label>-->
+                        <!--<select class="form-control" id="usernamesSelect">-->
+                            <!--<option>Choose user for private chat</option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<button id="privateSubmit" class="btn btn-primary">Send Private Message</button>-->
+            <!--</form>-->
+        <!--</div>-->
+        <!--<div class="col-6">-->
+            <!--<form action="javascript:void(0);">-->
+                <!--<div class="form-row">-->
+                    <!--<div class="form-group col-md-12">-->
+                        <!--<label for="publicMessageDataInput">Message</label>-->
+                        <!--<textarea class="form-control" id="publicMessageDataInput"></textarea>-->
+                    <!--</div>-->
+                <!--</div>-->
+                <!--<button id="publicSubmit" class="btn btn-primary">Send Public Message</button>-->
+            <!--</form>-->
+        <!--</div>-->
     </div>
-    <div class="row" style="margin-top: 50px">
-        <div class="col">
-            <h5>Private messages</h5>
-            <div id="privateChat" class="list-group">
-            </div>
-        </div>
-        <div class="col">
-            <h5>Public messages</h5>
-            <div id="publicChat" class="list-group">
-            </div>
-        </div>
-    </div>
+    <!--<div class="row" style="margin-top: 50px">-->
+        <!--<div class="col">-->
+            <!--<h5>Private messages</h5>-->
+            <!--<div id="privateChat" class="list-group">-->
+            <!--</div>-->
+        <!--</div>-->
+        <!--<div class="col">-->
+            <!--<h5>Public messages</h5>-->
+            <!--<div id="publicChat" class="list-group">-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
 
+</div>
+
+
+
+<div class="content container-fluid bootstrap snippets">
+    <div class="row row-broken">
+        <div class="col-sm-3 col-xs-12">
+            <div class="col-inside-lg decor-default chat" style="overflow: hidden; outline: none;" tabindex="5000">
+                <div class="chat-users">
+                    <h6>Online</h6>
+                    <div class="user">
+                        <div class="avatar">
+                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="User name">
+                            <div class="status off"></div>
+                        </div>
+                        <div class="name">User name</div>
+                        <div class="mood">User mood</div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-9 col-xs-12 chat message-container" style="overflow: hidden; outline: none;" tabindex="5001">
+            <div class="col-inside-lg decor-default">
+                <div id="chatMessages" class="chat-body">
+                    <div class="answer left">
+                        <div class="avatar">
+                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="User name">
+                            <div class="status offline"></div>
+                        </div>
+                        <div class="name">Alexander Herthic</div>
+                        <div class="text">
+                            Lorem ipsum dolor amet, consectetur adipisicing elit Lorem ipsum dolor amet, consectetur adipisicing elit Lorem ipsum dolor amet, consectetur adiping elit
+                        </div>
+                        <div class="time">5 min ago</div>
+                    </div>
+                    <div class="answer right">
+                        <div class="avatar">
+                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="User name">
+                            <div class="status offline"></div>
+                        </div>
+                        <div class="name">Alexander Herthic</div>
+                        <div class="text">
+                            Lorem ipsum dolor amet, consectetur adipisicing elit Lorem ipsum dolor amet, consectetur adipisicing elit Lorem ipsum dolor amet, consectetur adiping elit
+                        </div>
+                        <div class="time">5 min ago</div>
+                    </div>
+                    <div class="answer-add">
+                        <input id="publicMessageDataInput" placeholder="Write a message">
+                        <!--<button id="publicSubmit" class="btn btn-primary">Send Public Message</button>-->
+                        <span id="publicSubmit" class="answer-btn answer-btn-2"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
 </body>
 </html>

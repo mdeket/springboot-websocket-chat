@@ -2,6 +2,7 @@
  * Specific styles of signin component
  */
 body, html {
+    height: 100vh;
     background: url('../assets/login-background.jpg') no-repeat center center fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -10,7 +11,7 @@ body, html {
 }
 
 .card-container.card {
-    max-width: 350px;
+    width: 350px;
     padding: 40px 40px;
 }
 
@@ -54,14 +55,6 @@ body, html {
 /*
  * Form styles
  */
-.profile-name-card {
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    margin: 10px 0 0;
-    min-height: 1em;
-}
-
 .reauth-email {
     display: block;
     color: #404040;
@@ -125,14 +118,4 @@ body, html {
 .btn.btn-signin:active,
 .btn.btn-signin:focus {
     background-color: rgb(73, 72, 74);
-}
-
-.forgot-password {
-    color: rgb(104, 145, 162);
-}
-
-.forgot-password:hover,
-.forgot-password:active,
-.forgot-password:focus{
-    color: rgb(12, 97, 33);
 }
