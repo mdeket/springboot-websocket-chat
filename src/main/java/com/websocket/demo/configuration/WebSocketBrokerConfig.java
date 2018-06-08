@@ -26,7 +26,7 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app")
-                .enableStompBrokerRelay("/topic", "/queue", "/exchange/");
-//                .setUserDestinationBroadcast("/topic/unresolved-user-destination");
+                .enableSimpleBroker("/topic", "/queue", "/exchange/");
+//                .enableStompBrokerRelay("/topic", "/queue", "/exchange/");
     }
 }
