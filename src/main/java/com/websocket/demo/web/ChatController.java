@@ -30,13 +30,15 @@ public class ChatController {
 
     @MessageMapping("/chat.public")
     public ChatMessage publicChat(@Payload ChatMessage chatMessage, Principal principal) {
-        chatMessage.setUsername(principal.getName());
+        chatMessage.setTo("Public");
+        chatMessage.setFrom(principal.getName());
         return chatMessage;
     }
 
     @MessageMapping("/chat.private.{username}")
     public void privateChat(@Payload ChatMessage chatMessage, @DestinationVariable("username") String username, Principal principal) {
-        chatMessage.setUsername(principal.getName());
+        chatMessage.setTo(username);
+        chatMessage.setFrom(principal.getName());
         String message = chatMessage.getMessage();
         String editedMessage = "[private] " + message;
         chatMessage.setMessage(editedMessage);

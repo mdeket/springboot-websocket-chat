@@ -46,7 +46,7 @@
         <div class="col-sm-3 col-xs-12">
             <div class="col-inside-lg decor-default chat" style="overflow: hidden; outline: none;" tabindex="5000">
                 <div class="chat-users">
-                    <div class="user" id="public">
+                    <div class="user" id="Public" data-username="public">
                         <div class="avatar">
                             <img src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" alt="User name">
                             <div class="status online"></div>
@@ -60,9 +60,10 @@
         <div class="col-sm-9 col-xs-12 chat message-container" style="overflow: hidden; outline: none;" tabindex="5001">
             <div class="col-inside-lg decor-default">
                 <div id="chatMessages" class="chat-body">
+                    <h5 id="chatTitle">Public</h5>
                     <div class="answer-add">
-                        <input id="publicMessageDataInput" placeholder="Write a message">
-                        <span id="publicSubmit" class="answer-btn answer-btn-2"></span>
+                        <input id="messageInput" placeholder="Write a message">
+                        <span id="submitMessage" class="answer-btn answer-btn-2"></span>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,9 @@
 var ws;
 var stompClient;
 var myUsername = "unknown";
+var chosenChat = "Public";
+
+var messages = [];
 
 var messageLeft = '<div class="answer left">\n' +
     '                        <div class="avatar">\n' +
@@ -73,11 +76,21 @@ $(document).ready(function () {
         });
 
         stompClient.subscribe("/topic/chat.public", function (message) {
-            addPublicMessage(message.body);
+            if(JSON.parse(message.body).from !== myUsername) {
+                receivedPublicMessage(JSON.parse(message.body));
+            }
         });
 
         stompClient.subscribe("/user/exchange/amq.direct/chat.private", function (message) {
-            addPrivateMessage(message.body);
+            console.log(JSON.parse(message.body))
+            var temp = JSON.parse(message.body);
+            var message = JSON.parse(message.body);
+            message.to = temp.from;
+            message.from = temp.to;
+            receivedPrivateMessage(message);
+            if(message.to !== chosenChat) {
+                toastr.info("You just received private message from " + message.to);
+            }
         });
 
     }, function (error) {
@@ -85,20 +98,24 @@ $(document).ready(function () {
         toastr.warning('Bloody hell, something went wrong!');
     });
 
-    $('#privateSubmit').on('click', function () {
-        sendPrivate();
+    $('#submitMessage').on('click', function () {
+        if(chosenChat === 'Public') {
+            sendPublic();
+        } else {
+            sendPrivate();
+        }
     });
 
-    $('#publicSubmit').on('click', function () {
-        sendPublic();
-    });
-
-    $('#publicMessageDataInput').bind("enterKey",function(e){
+    $('#messageInput').bind("enterKey",function(e){
         //do stuff here
-        sendPublic();
+        if(chosenChat === 'Public') {
+            sendPublic();
+        } else {
+            sendPrivate();
+        }
     });
 
-    $('#publicMessageDataInput').keyup(function(e){
+    $('#messageInput').keyup(function(e){
         if(e.keyCode == 13)
         {
             $(this).trigger("enterKey");
@@ -107,59 +124,83 @@ $(document).ready(function () {
 
 
     function sendPrivate(){
-        var username = $('#usernamesSelect').find(":selected").text();
+        var username = chosenChat; //$('#usernamesSelect').find(":selected").text();
         if(username === undefined || username === '' || username === 'Choose user for private chat') {
             toastr.error("Please choose user to whom a message will be sent");
             return;
         }
 
-        var data = $("#privateMessageDataInput").val();
+        var data = $("#messageInput").val();
         if(data === undefined || data === '') {
             toastr.error("Message can't be empty!");
             return;
         }
 
         stompClient.send("/app/chat.private." + username, {}, JSON.stringify({ message: data, username: 'me'}));
-        addPrivateMessage(JSON.stringify({ message: data, username: 'me'}));
-        $('#privateMessageUsernameInput').val('');
-        $('#privateMessageDataInput').val('');
+        $('#messageInput').val('');
+        addMessage({ text: data, to: username, from: myUsername, date: moment().format("HH:mm") });
+        // addPrivateMessage({ text: data, to: username, from: myUsername, date: moment().format("HH:mm")});
+    }
+
+    function addPrivateMessage(message) {
+        var from = message.from;
+        var text = message.text;
+        var date = message.date;
+        if(from === myUsername) {
+            messageHTML = messageRight
+                .replace('MESSAGE_TEXT', text)
+                .replace("MESSAGE_DATE", date);
+        } else {
+            messageHTML = messageLeft
+                .replace('MESSAGE_TEXT', text)
+                .replace("MESSAGE_DATE", date);
+        }
+
+        $(messageHTML).insertBefore(".answer-add");
+        $('.message-container').animate({
+            scrollTop: 1000
+        }, 0);
+    }
+
+    function receivedPrivateMessage(message) {
+        var to = message['to'];
+        var from = message['from'];
+        var text = message['message'];
+        addMessage({to: to, from: to, text: text, date: moment(message['date']).format("HH:mm")});
+    }
+
+    function receivedPublicMessage(message) {
+        var to = message['to'];
+        var from = message['from'];
+        var text = message['message'];
+        addMessage({to: to, from: from, text: text, date: moment(message['date']).format("HH:mm")});
     }
 
     function sendPublic(){
-        var data = $("#publicMessageDataInput").val();
+        var data = $("#messageInput").val();
         if(data !== undefined && data !== '') {
             stompClient.send("/app/chat.public", {}, JSON.stringify({ message: data }));
-            $('#publicMessageDataInput').val('');
+            $('#messageInput').val('');
+            addMessage({ to: "Public", text: data, from: myUsername, date: moment().format("HH:mm") });
         } else {
             toastr.error("Message can't be empty!");
             return;
         }
     }
 
-    function addPrivateMessage(message) {
-        var parsedMessage = JSON.parse(message);
-        var from = parsedMessage['username'];
-        var text = parsedMessage['message'];
-        var messageHTML = messageTemplate
-            .replace('MESSAGE_TEXT', text)
-            .replace("MESSAGE_USERNAME", from)
-            .replace("MESSAGE_DATE", moment(parsedMessage['date']).format("HH:mm"));
-        $('#privateChat').append(messageHTML);
-    }
-
     function addPublicMessage(message) {
-        var parsedMessage = JSON.parse(message);
-        var from = parsedMessage['username'];
-        var text = parsedMessage['message'];
+        var from = message.from;
+        var text = message.text;
+        var date = message.date;
         var messageHTML;
         if(from === myUsername) {
             messageHTML = messageRight
                 .replace('MESSAGE_TEXT', text)
-                .replace("MESSAGE_DATE", moment(parsedMessage['date']).format("HH:mm"));
+                .replace("MESSAGE_DATE", date);
         } else {
             messageHTML = messageLeft
                 .replace('MESSAGE_TEXT', text)
-                .replace("MESSAGE_DATE", moment(parsedMessage['date']).format("HH:mm"));
+                .replace("MESSAGE_DATE", date);
         }
 
         $(messageHTML).insertBefore(".answer-add");
@@ -179,7 +220,6 @@ $(document).ready(function () {
                     .replace("USERNAME", message.username)
                     .replace("ID", message.username);
                 $('.chat-users').append(temp);
-
             }
         });
     }
@@ -196,7 +236,57 @@ $(document).ready(function () {
     function updateMyUsername(){
         $('#myUsername').text(myUsername);
     }
+
+    function addMessage(message){
+        if(messages.length > 0) {
+            debugger
+            var added = false;
+            messages.forEach(function (data) {
+                if(data.chat === message.to) {
+                    if(data.message === undefined){
+                        data.message = [];
+                    }
+                    data.message.push({ text: message.text, date: message.date, from: message.from });
+                    added = true;
+                }
+            });
+            if(!added) {
+                messages.push({ chat: message.to, message: [{ text: message.text, date: message.date, from: message.from}]})
+            }
+        } else {
+            messages.push({ chat: message.to, message: [{ text: message.text, date: message.date, from: message.from }]})
+        }
+        parseMessages();
+    }
+
     $(".chat").niceScroll();
+
+    $(".chat-users").on('click','.user',  function(event) {
+        chosenChat = $(this.closest('.user')).attr('id');
+        $('#chatTitle').text(chosenChat);
+        parseMessages();
+    });
+
+    function parseMessages() {
+        $('.answer').remove();
+        if(chosenChat === 'Public'){
+            messages.forEach(function (value) {
+                if(value.chat === 'Public') {
+                    value.message.forEach(function (data) {
+                        addPublicMessage({ from: data.from , text: data.text, date: data.date });
+                    })
+                }
+            });
+        } else {
+            messages.forEach(function (value) {
+                if(value.chat === chosenChat) {
+                    value.message.forEach(function (data) {
+                        addPrivateMessage({ from: data.from , text: data.text, date: data.date });
+                    })
+                }
+            });
+        }
+    }
 
     updateMyUsername();
 });

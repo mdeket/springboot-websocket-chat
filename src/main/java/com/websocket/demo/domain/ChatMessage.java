@@ -4,7 +4,8 @@ import java.time.Instant;
 
 public class ChatMessage {
 
-    private String username;
+    private String from;
+    private String to;
     private String message;
     private Instant date;
 
@@ -12,17 +13,27 @@ public class ChatMessage {
         this.date = Instant.now();
     }
 
-    public String getUsername() {
-        return username;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
     public String getMessage() {
         return message;
     }
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
     }
 
     public Instant getDate() {
@@ -35,7 +46,11 @@ public class ChatMessage {
 
     @Override
     public String toString() {
-        return "ChatMessage [user=" + username + ", message=" + message + "]";
+        return "ChatMessage{" +
+                "from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", message='" + message + '\'' +
+                ", date=" + date +
+                '}';
     }
-
 }
