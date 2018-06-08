@@ -4,8 +4,8 @@ var myUsername = "unknown";
 
 var messageLeft = '<div class="answer left">\n' +
     '                        <div class="avatar">\n' +
-    '                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="User name">\n' +
-    '                            <div class="status offline"></div>\n' +
+    '                            <img src="https://randomuser.me/api/portraits/thumb/men/83.jpg" alt="User name">\n' +
+    '                            <div class="status online"></div>\n' +
     '                        </div>\n' +
     '                        <div class="text">MESSAGE_TEXT' +
     '                        </div>\n' +
@@ -14,8 +14,8 @@ var messageLeft = '<div class="answer left">\n' +
 
 var messageRight = '<div class="answer right">\n' +
     '                        <div class="avatar">\n' +
-    '                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="User name">\n' +
-    '                            <div class="status offline"></div>\n' +
+    '                            <img src="https://randomuser.me/api/portraits/thumb/men/83.jpg" alt="User name">\n' +
+    '                            <div class="status online"></div>\n' +
     '                        </div>\n' +
     '                        <div class="name"></div>\n' +
     '                        <div class="text">MESSAGE_TEXT' +
@@ -25,10 +25,10 @@ var messageRight = '<div class="answer right">\n' +
 
 var chatTemplate = '<div class="user" id="ID">\n' +
     '                        <div class="avatar">\n' +
-    '                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="User name">\n' +
+    '                            <img src="https://randomuser.me/api/portraits/thumb/men/83.jpg" alt="User name">\n' +
     '                            <div class="status online"></div>\n' +
     '                        </div>\n' +
-    '                        <div class="name">USERNAME</div>\n' +
+    '                        <div class="name">USERNAME</div>' +
     '<div class="mood">Online</div>' +
     '                    </div>';
 $(document).ready(function () {
@@ -178,7 +178,7 @@ $(document).ready(function () {
                 var temp = chatTemplate
                     .replace("USERNAME", message.username)
                     .replace("ID", message.username);
-                $(temp).insertBefore('.user');
+                $('.chat-users').append(temp);
 
             }
         });

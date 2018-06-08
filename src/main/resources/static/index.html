@@ -39,73 +39,20 @@
                 <a href="/logout">Logout </a>
             </div>
         </div>
-
-
     </div>
-
-    <!--<div class="row">-->
-        <!--<div class="col-6">-->
-            <!--<h5>Online users:</h5>-->
-            <!--<ul class="list-group list-group-flush" id="usernames">-->
-            <!--</ul>-->
-        <!--</div>-->
-    <!--</div>-->
-    <div class="row" style="margin-top: 50px">
-
-        <!--<div class="col-6">-->
-            <!--<form action="javascript:void(0);" >-->
-                <!--<div class="form-row">-->
-                    <!--<div class="form-group col-md-12">-->
-                        <!--<label for="privateMessageDataInput">Message</label>-->
-                        <!--<textarea class="form-control" id="privateMessageDataInput"></textarea>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<div class="form-row">-->
-                    <!--<div class="form-group col-md-12">-->
-                        <!--<label for="usernamesSelect">To</label>-->
-                        <!--<select class="form-control" id="usernamesSelect">-->
-                            <!--<option>Choose user for private chat</option>-->
-                        <!--</select>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<button id="privateSubmit" class="btn btn-primary">Send Private Message</button>-->
-            <!--</form>-->
-        <!--</div>-->
-        <!--<div class="col-6">-->
-            <!--<form action="javascript:void(0);">-->
-                <!--<div class="form-row">-->
-                    <!--<div class="form-group col-md-12">-->
-                        <!--<label for="publicMessageDataInput">Message</label>-->
-                        <!--<textarea class="form-control" id="publicMessageDataInput"></textarea>-->
-                    <!--</div>-->
-                <!--</div>-->
-                <!--<button id="publicSubmit" class="btn btn-primary">Send Public Message</button>-->
-            <!--</form>-->
-        <!--</div>-->
-    </div>
-    <!--<div class="row" style="margin-top: 50px">-->
-        <!--<div class="col">-->
-            <!--<h5>Private messages</h5>-->
-            <!--<div id="privateChat" class="list-group">-->
-            <!--</div>-->
-        <!--</div>-->
-        <!--<div class="col">-->
-            <!--<h5>Public messages</h5>-->
-            <!--<div id="publicChat" class="list-group">-->
-            <!--</div>-->
-        <!--</div>-->
-    <!--</div>-->
-
 </div>
-
-
-
 <div class="content container-fluid bootstrap snippets">
     <div class="row row-broken">
         <div class="col-sm-3 col-xs-12">
             <div class="col-inside-lg decor-default chat" style="overflow: hidden; outline: none;" tabindex="5000">
                 <div class="chat-users">
-                    <div class="user">
+                    <div class="user" id="public">
+                        <div class="avatar">
+                            <img src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" alt="User name">
+                            <div class="status online"></div>
+                        </div>
+                        <div class="name">PUBLIC CHAT</div>
+                        <div class="mood">Online</div>
                     </div>
                 </div>
             </div>
@@ -115,12 +62,10 @@
                 <div id="chatMessages" class="chat-body">
                     <div class="answer-add">
                         <input id="publicMessageDataInput" placeholder="Write a message">
-                        <!--<button id="publicSubmit" class="btn btn-primary">Send Public Message</button>-->
                         <span id="publicSubmit" class="answer-btn answer-btn-2"></span>
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
