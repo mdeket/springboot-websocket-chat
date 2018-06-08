@@ -38,6 +38,32 @@
         </div>
     </div>
     <div class="row" style="margin-top: 50px">
+
+        <div class="col-6">
+            <form action="javascript:void(0);" >
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="privateMessageDataInput">Message</label>
+                        <textarea class="form-control" id="privateMessageDataInput"></textarea>
+                    </div>
+                </div>
+                <!--<div class="form-row">-->
+                    <!--<div class="form-group col-md-12">-->
+                        <!--<label for="privateMessageUsernameInput">To</label>-->
+                        <!--<input type="text" class="form-control" id="privateMessageUsernameInput" placeholder="Username">-->
+                    <!--</div>-->
+                <!--</div>-->
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="usernamesSelect">To</label>
+                        <select class="form-control" id="usernamesSelect">
+                            <option>Choose user for private chat</option>
+                        </select>
+                    </div>
+                </div>
+                <button id="privateSubmit" class="btn btn-primary">Send Private Message</button>
+            </form>
+        </div>
         <div class="col-6">
             <form action="javascript:void(0);">
                 <div class="form-row">
@@ -47,23 +73,6 @@
                     </div>
                 </div>
                 <button id="publicSubmit" class="btn btn-primary">Send Public Message</button>
-            </form>
-        </div>
-        <div class="col-6">
-            <form action="javascript:void(0);" >
-                <div class="form-row">
-                    <div class="form-group col-md-12">
-                        <label for="privateMessageDataInput">Message</label>
-                        <textarea class="form-control" id="privateMessageDataInput"></textarea>
-                    </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-md-12">
-                        <label for="privateMessageUsernameInput">To</label>
-                        <input type="text" class="form-control" id="privateMessageUsernameInput" placeholder="Username">
-                    </div>
-                </div>
-                <button id="privateSubmit" class="btn btn-primary">Send Private Message</button>
             </form>
         </div>
     </div>

@@ -71,7 +71,7 @@ $(document).ready(function () {
     });
 
     function sendPrivate(){
-        var username = $('#privateMessageUsernameInput').val();
+        var username = $('#usernamesSelect').find(":selected").text();
         var data = $("#privateMessageDataInput").val();
         stompClient.send("/app/chat.private." + username, {}, JSON.stringify({ message: data, username: 'me'}));
         addPrivateMessage(JSON.stringify({ message: data, username: 'me'}));
@@ -110,6 +110,11 @@ $(document).ready(function () {
         JSON.parse(messages.body).forEach(function(message){
             if(message.username !== myUsername) {
                 $('#usernames').append('<li class="list-group-item" id="' + message.username + '">' + message.username + '</li>');
+                $('#usernamesSelect').append($('<option>', {
+                    value: message.username,
+                    text: message.username
+                }));
+
             }
         });
     }
@@ -117,6 +122,10 @@ $(document).ready(function () {
     function addUsername(message){
         $('#usernames').html();
         if(JSON.parse(message.body).username !== myUsername) {
+            $('#usernamesSelect').append($('<option>', {
+                value: message.username,
+                text: message.username
+            }));
             $('#usernames').append('<li class="list-group-item" id="' + JSON.parse(message.body).username + '">' + JSON.parse(message.body).username + '</li>');
         }
     }
