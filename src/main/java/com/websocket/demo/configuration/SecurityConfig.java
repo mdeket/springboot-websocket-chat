@@ -27,6 +27,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/index.html")
                 .permitAll()
             .and()
+                .logout()
+                .logoutSuccessUrl("/login.html")
+                .permitAll()
+            .and()
                 .authorizeRequests()
                 .antMatchers("/index.html", "/").authenticated()
                 .antMatchers("/login.html", "/css/*", "/js/*", "/assets/*").permitAll();

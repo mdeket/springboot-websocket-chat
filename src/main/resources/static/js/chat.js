@@ -10,6 +10,24 @@ var messageTemplate = '<a href="#" class="list-group-item list-group-item-action
     '                </a>';
 $(document).ready(function () {
 
+    toastr.options = {
+        "closeButton": true,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": true,
+        "positionClass": "toast-top-center",
+        "preventDuplicates": true,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "3000",
+        "extendedTimeOut": "1000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    };
+
     ws = new SockJS('/ws');
     stompClient = Stomp.over(ws);
 
@@ -41,11 +59,7 @@ $(document).ready(function () {
 
     }, function (error) {
         console.log(error);
-        alert("Bloody hell, something went wrong!")
-    });
-
-    $('#submit').on('click', function () {
-        sendData();
+        toastr.warning('Bloody hell, something went wrong!');
     });
 
     $('#privateSubmit').on('click', function () {
@@ -111,8 +125,5 @@ $(document).ready(function () {
         $('#myUsername').text(myUsername);
     }
 
-    $('li').on('click', function (e) {
-        alert();
-    });
     updateMyUsername();
 });
