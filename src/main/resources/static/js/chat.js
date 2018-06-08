@@ -72,7 +72,17 @@ $(document).ready(function () {
 
     function sendPrivate(){
         var username = $('#usernamesSelect').find(":selected").text();
+        if(username === undefined || username === '' || username === 'Choose user for private chat') {
+            toastr.error("Please choose user to whom a message will be sent");
+            return;
+        }
+
         var data = $("#privateMessageDataInput").val();
+        if(data === undefined || data === '') {
+            toastr.error("Message can't be empty!");
+            return;
+        }
+
         stompClient.send("/app/chat.private." + username, {}, JSON.stringify({ message: data, username: 'me'}));
         addPrivateMessage(JSON.stringify({ message: data, username: 'me'}));
         $('#privateMessageUsernameInput').val('');
@@ -81,8 +91,13 @@ $(document).ready(function () {
 
     function sendPublic(){
         var data = $("#publicMessageDataInput").val();
-        stompClient.send("/app/chat.public", {}, JSON.stringify({ message: data }));
-        $('#publicMessageDataInput').val('');
+        if(data !== undefined && data !== '') {
+            stompClient.send("/app/chat.public", {}, JSON.stringify({ message: data }));
+            $('#publicMessageDataInput').val('');
+        } else {
+            toastr.error("Message can't be empty!");
+            return;
+        }
     }
 
     function addPrivateMessage(message) {
