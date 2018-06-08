@@ -19,17 +19,16 @@
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
     <link href="css/login.css" rel="stylesheet">
-    <script src="js/login.js"></script>
 </head>
 <body>
 <div class="container">
     <div class="card card-container">
         <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"/>
+        <p><small style="color:#666">Enter a nickname to join.</small></p>
         <p id="profile-name" class="profile-name-card"></p>
         <form class="form-signin" method="post" action="/login">
             <span id="reauth-email" class="reauth-email"></span>
             <input type="text" id="inputEmail" class="form-control" name="username" placeholder="Username" required autofocus>
-            <input type="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required>
             <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
         </form>
     </div>
