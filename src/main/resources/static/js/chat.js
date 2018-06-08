@@ -1,20 +1,12 @@
 var ws;
 var stompClient;
 var myUsername = "unknown";
-var messageTemplate = '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">\n' +
-    '                    <div class="d-flex w-100 justify-content-between">\n' +
-    '                        <p class="mb-1">MESSAGE_TEXT</p>\n' +
-    '                        <small class="text-muted">MESSAGE_DATE</small>\n' +
-    '                    </div>\n' +
-    '                    <small class="text-muted">MESSAGE_USERNAME</small>\n' +
-    '                </a>';
 
 var messageLeft = '<div class="answer left">\n' +
     '                        <div class="avatar">\n' +
     '                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="User name">\n' +
     '                            <div class="status offline"></div>\n' +
     '                        </div>\n' +
-    '                        <div class="name">MESSAGE_USERNAME</div>\n' +
     '                        <div class="text">MESSAGE_TEXT' +
     '                        </div>\n' +
     '                        <div class="time">MESSAGE_DATE</div>\n' +
@@ -25,12 +17,20 @@ var messageRight = '<div class="answer right">\n' +
     '                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="User name">\n' +
     '                            <div class="status offline"></div>\n' +
     '                        </div>\n' +
-    '                        <div class="name">MESSAGE_USERNAME</div>\n' +
+    '                        <div class="name"></div>\n' +
     '                        <div class="text">MESSAGE_TEXT' +
     '                        </div>\n' +
     '                        <div class="time">MESSAGE_DATE</div>\n' +
     '                    </div>';
 
+var chatTemplate = '<div class="user" id="ID">\n' +
+    '                        <div class="avatar">\n' +
+    '                            <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="User name">\n' +
+    '                            <div class="status online"></div>\n' +
+    '                        </div>\n' +
+    '                        <div class="name">USERNAME</div>\n' +
+    '<div class="mood">Online</div>' +
+    '                    </div>';
 $(document).ready(function () {
 
     toastr.options = {
@@ -98,6 +98,14 @@ $(document).ready(function () {
         sendPublic();
     });
 
+    $('#publicMessageDataInput').keyup(function(e){
+        if(e.keyCode == 13)
+        {
+            $(this).trigger("enterKey");
+        }
+    });
+
+
     function sendPrivate(){
         var username = $('#usernamesSelect').find(":selected").text();
         if(username === undefined || username === '' || username === 'Choose user for private chat') {
@@ -143,15 +151,21 @@ $(document).ready(function () {
         var parsedMessage = JSON.parse(message);
         var from = parsedMessage['username'];
         var text = parsedMessage['message'];
+        var messageHTML;
+        if(from === myUsername) {
+            messageHTML = messageRight
+                .replace('MESSAGE_TEXT', text)
+                .replace("MESSAGE_DATE", moment(parsedMessage['date']).format("HH:mm"));
+        } else {
+            messageHTML = messageLeft
+                .replace('MESSAGE_TEXT', text)
+                .replace("MESSAGE_DATE", moment(parsedMessage['date']).format("HH:mm"));
+        }
 
-        var messageHTML = messageLeft
-            .replace('MESSAGE_TEXT', text)
-            .replace("MESSAGE_USERNAME", from)
-            .replace("MESSAGE_DATE", moment(parsedMessage['date']).format("HH:mm"));
         $(messageHTML).insertBefore(".answer-add");
         $('.message-container').animate({
             scrollTop: 1000
-        }, 1000);
+        }, 0);
     }
 
     function removeUsername(message){
@@ -159,27 +173,23 @@ $(document).ready(function () {
     }
 
     function showUsernames(messages) {
-        $('#usernames').html();
         JSON.parse(messages.body).forEach(function(message){
             if(message.username !== myUsername) {
-                $('#usernames').append('<li class="list-group-item" id="' + message.username + '">' + message.username + '</li>');
-                $('#usernamesSelect').append($('<option>', {
-                    value: message.username,
-                    text: message.username
-                }));
+                var temp = chatTemplate
+                    .replace("USERNAME", message.username)
+                    .replace("ID", message.username);
+                $(temp).insertBefore('.user');
 
             }
         });
     }
 
     function addUsername(message){
-        $('#usernames').html();
         if(JSON.parse(message.body).username !== myUsername) {
-            $('#usernamesSelect').append($('<option>', {
-                value: message.username,
-                text: message.username
-            }));
-            $('#usernames').append('<li class="list-group-item" id="' + JSON.parse(message.body).username + '">' + JSON.parse(message.body).username + '</li>');
+            var temp = chatTemplate
+                .replace("USERNAME", JSON.parse(message.body).username)
+                .replace("ID", JSON.parse(message.body).username);
+            $('.chat-users').append(temp);
         }
     }
 
