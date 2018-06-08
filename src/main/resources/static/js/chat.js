@@ -4,7 +4,7 @@ var myUsername = "unknown";
 var messageTemplate = '<a href="#" class="list-group-item list-group-item-action flex-column align-items-start">\n' +
     '                    <div class="d-flex w-100 justify-content-between">\n' +
     '                        <p class="mb-1">MESSAGE_TEXT</p>\n' +
-    '                        <small class="text-muted">3 days ago</small>\n' +
+    '                        <small class="text-muted">MESSAGE_DATE</small>\n' +
     '                    </div>\n' +
     '                    <small class="text-muted">MESSAGE_USERNAME</small>\n' +
     '                </a>';
@@ -75,7 +75,7 @@ $(document).ready(function () {
         var parsedMessage = JSON.parse(message);
         var from = parsedMessage['username'];
         var text = parsedMessage['message'];
-        var messageHTML = messageTemplate.replace('MESSAGE_TEXT', text).replace("MESSAGE_USERNAME", from);
+        var messageHTML = messageTemplate.replace('MESSAGE_TEXT', text).replace("MESSAGE_USERNAME", from).replace("MESSAGE_DATE", moment(parsedMessage['date']).format("HH:mm"));
         $('#privateChat').append(messageHTML);
     }
 
@@ -83,7 +83,7 @@ $(document).ready(function () {
         var parsedMessage = JSON.parse(message);
         var from = parsedMessage['username'];
         var text = parsedMessage['message'];
-        var messageHTML = messageTemplate.replace('MESSAGE_TEXT', text).replace("MESSAGE_USERNAME", from);
+        var messageHTML = messageTemplate.replace('MESSAGE_TEXT', text).replace("MESSAGE_USERNAME", from).replace("MESSAGE_DATE", moment(parsedMessage['date']).format("HH:mm"));
         $('#publicChat').append(messageHTML);
     }
 
